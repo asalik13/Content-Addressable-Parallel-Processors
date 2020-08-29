@@ -8,24 +8,17 @@ module top (
     assign USBPU = 0;
 
     reg [31:0] comparand; // holds item
+
+    wire[31:0] comparand_wire; //continuous value of comparand
+
+    assign comparand_wire = comparand;
+
     reg [31:0] mask; //holds required bits of item
-    
 
-    ////////
-    // make a simple blink circuit
-    ////////
+    wire[31:0] mask_wire; //continous value of mask
 
-    // keep track of time and location in blink_pattern
-    reg [25:0] blink_counter;
+    assign mask_wire = mask;
 
-    // pattern that will be flashed over the LED over time
-    wire [15:0] blink_pattern = 16'b0000000011111111;
+    wire perform_search; //controls search
 
-    // increment the blink_counter every clock
-    always @(posedge CLK) begin
-        blink_counter <= blink_counter + 1;
-    end
-
-    // light up the LED according to the pattern
-    assign LED = blink_pattern[blink_counter[25:21]];
 endmodule

@@ -1,5 +1,5 @@
 // look in pins.pcf for all the pin names on the TinyFPGA BX board
-module top (
+module compare (
     input CLK,    // 16MHz clock
     output LED,   // User/boot LED next to power LED
     output USBPU  // USB pull-up resistor
@@ -34,7 +34,7 @@ module top (
     input wire perform_search;
     input reg [31:0] comparand;
     input reg [31:0] mask;
-    input reg [4095:0] cell_values;
+    input reg [4095:0] cells;
     output reg [4095:0] tag;
 
     wire [31:0] comparand_wire;
@@ -57,7 +57,7 @@ module top (
     endgenerate
 
     for(i=0; i<4096; i=i+1) begin
-       tag[i] = compare_cell(match_lines, cell_values[i]);
+       tag[i] = compare_cell(match_lines, cells[i]);
        end
   endfunction
 

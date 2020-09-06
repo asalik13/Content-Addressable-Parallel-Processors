@@ -6,15 +6,5 @@ module top (
 );
 
 
-    // drive USB pull-up resistor to '0' to disable USB
-    assign USBPU = 0;
-
-
-
-
-
-
-
-
 
 endmodule

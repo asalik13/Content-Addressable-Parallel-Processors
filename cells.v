@@ -6,9 +6,6 @@ output [31:0] read_lines;
 reg [31:0] store[0:4];
 
 
-
-
-
 genvar i,j;
 generate
   for(i=0; i<5; i = i+1) begin
@@ -27,12 +24,6 @@ generate
 
      end
   end
-
-
-
-
-
-
 
 endgenerate
 

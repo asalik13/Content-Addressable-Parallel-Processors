@@ -1,10 +1,10 @@
 module tags(mismatch_lines, set, select_first, tags, CLK);
-input wire [4:0] mismatch_lines;
+input wire [99:0] mismatch_lines;
 input wire select_first;
 input wire set;
 input CLK;
-output reg [4:0] tags;
-wire [4:0] tag_wires;
+output reg [99:0] tags;
+wire [99:0] tag_wires;
 wire some_none;
 genvar i;
 
@@ -14,7 +14,7 @@ srff_behave flipflop (tag_wires[0], set, mismatch_lines[0], CLK);
 
 generate
 wire temp;
-for(i = 1; i<4; i=i+1) begin
+for(i = 1; i<99; i=i+1) begin
   or(some_none, some_none, tags[i]);
   and(temp, some_none, select_first);
   or(temp, temp, mismatch_lines[i]);

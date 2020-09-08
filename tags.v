@@ -1,10 +1,10 @@
-module tags(mismatch_lines, set, select_first, tags, CLK);
+module tags(mismatch_lines, set, select_first, tag_wires, CLK);
 input wire [99:0] mismatch_lines;
 input wire select_first;
 input wire set;
 input CLK;
-output reg [99:0] tags;
-wire [99:0] tag_wires;
+output wire [99:0] tag_wires;
+reg [99:0] tags;
 wire some_none;
 genvar i;
 

@@ -5,7 +5,7 @@ wire [31:0] mask = 32'b111111;
 wire [99:0] tag_wires;
 wire [63:0] mismatch_lines;
 wire [63:0] write_lines;
-wire [99:0] match_lines = 100'b0;
+wire [99:0] match_lines;
 wire [31:0] read_lines;
 wire perform_search, set, select_first;
 assign perform_search = 1'b1;

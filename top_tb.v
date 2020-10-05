@@ -1,7 +1,7 @@
 module tb(CLK); 
 input CLK;
 wire [31:0] comparand = 457;
-wire [31:0] mask = 32'b111111;
+wire [31:0] mask = 32'b111111111;
 wire [99:0] tag_wires;
 wire [63:0] mismatch_lines;
 wire [63:0] write_lines;
@@ -16,7 +16,7 @@ cells cells_module (match_lines, write_lines, read_lines, mismatch_lines);
 //tags tags_module(match_lines, set, select_first, tag_wires, CLK);
 initial
 begin
-#200000000000
+#1000
 $display("Comparand value: %b", comparand);
 $display("Mask Value: %b", mask);
 $display("Perform Search: %b", perform_search);

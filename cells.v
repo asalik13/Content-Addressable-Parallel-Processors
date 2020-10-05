@@ -4,7 +4,7 @@ input [63:0] write_lines;
 output wire [99:0] match_lines;
 output [31:0] read_lines;
 reg [31:0] store[99:0];
-wire [99:0] [31:0] temp_wires;
+wire [31:0] temp_wires [99:0];
 
 
 /*
@@ -35,7 +35,6 @@ initial begin
     $display("idx:%d value:%d, mismatch: %d", idx, store[idx], match_lines[idx]);
   end
 end
-
 
 /*
 reg temp;

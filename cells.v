@@ -4,9 +4,12 @@ input [63:0] write_lines;
 output wire [99:0] match_lines;
 output [31:0] read_lines;
 reg [31:0] store[99:0];
-reg temp;
 wire [99:0] [31:0] temp_wires;
 
+
+/*
+  This will take around 1000 seconds to build, but it does not occupy runtime or storage.
+*/
 genvar i,j;
 generate
 for(i = 0; i<100; i = i+1) begin
@@ -33,9 +36,9 @@ initial begin
   end
 end
 
-//assign match_lines = temp_wires[99];
 
 /*
+reg temp;
 integer i,j;
 always @(*) begin
 for(i=0; i<100; i = i+1) begin

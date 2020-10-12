@@ -29,11 +29,10 @@ initial begin
   store[2] <= 1000;
   store[3] <= 1000;
   store[4] <= 457;
-  #10000
-
-  for(idx = 0; idx<5; idx= idx+1) begin
-    $display("idx:%d value:%d, mismatch: %d", idx, store[idx], match_lines[idx]);
+  for(idx=5; idx<99; idx= idx+1) begin
+  store[idx] = idx;
   end
+  store[99] = 457;
 end
 
 /*

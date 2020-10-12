@@ -1,29 +1,31 @@
-module tags(match_lines, set, select_first, tag_wires, CLK);
+module tags(match_lines, set, select_first, tags, CLK);
+
 input wire [99:0] match_lines;
 input wire select_first;
 input wire set;
 input CLK;
-output wire [99:0] tag_wires;
-reg [99:0] tags;
-wire [99:0] temp;
-wire some_none;
-genvar i;
+output reg [99:0] tags;
 
-assign tag_wires = tags;
-assign some_none = tags[0];
+
+wire [99:0] tag_wires;
+wire [99:0] temp;
+wire [99:0] some_none;
+assign some_none[0] = tag_wires[0];
 srff_behave flipflop (tag_wires[0], set, match_lines[0], CLK);
 
+
+genvar i;
 generate
-for(i = 1; i<99; i=i+1) begin
-  or(some_none, some_none, tags[i]);
-  and(temp[i], some_none, select_first);
-  or(temp[i], temp[i], match_lines[i]);
+for(i = 1; i<100; i=i+1) begin: random
+  assign some_none[i] = some_none[i-1] || tag_wires[i];
+  assign temp[i] = (some_none[i] & select_first) || match_lines[i];
   srff_behave flipflop (tag_wires[i], set, temp[i], CLK);
-  end
+end
 endgenerate
 
-always @ (posedge CLK) begin
-  tags <= tag_wires;
+
+always@(posedge CLK) begin
+tags <= tag_wires;
 end
 
 endmodule

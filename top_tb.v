@@ -14,12 +14,12 @@ reg select_first;
 
 
 compare compare_module (CLK, comparand,mask,perform_search, mismatch_lines);
-cells cells_module (match_lines, write_lines, read_lines, mismatch_lines);
+cells cells_module (match_lines, write_lines, read_lines, mismatch_lines, tag_wires);
 tags tags_module(match_lines, set, select_first, tag_wires, CLK);
 
 
 initial begin
-$monitor("simtime = %g, Tags =  %b", $time, tag_wires);
+$monitor("\n simtime = %g, \n Tags =  %b \n Read Lines = %b", $time, tag_wires, read_lines);
 end
 
 initial begin

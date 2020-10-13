@@ -1,5 +1,6 @@
 module tags(match_lines, set, select_first, tags, CLK);
 
+input [99:0] write_cell;
 input wire [99:0] match_lines;
 input wire select_first;
 input wire set;
@@ -11,7 +12,7 @@ wire [99:0] tag_wires;
 wire [99:0] temp;
 wire [99:0] some_none;
 assign some_none[0] = tag_wires[0];
-srff_behave flipflop (tag_wires[0], set, match_lines[0], CLK);
+srff_behave flip (tag_wires[0], set , match_lines[0], CLK);
 
 
 genvar i;

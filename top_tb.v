@@ -13,6 +13,9 @@ reg set;
 reg select_first;
 reg [63:0] write_lines;
 
+reg [99:0] write_cell;
+reg [99:0] reset_cell;
+
 compare compare_module (CLK, comparand,mask,perform_search, mismatch_lines);
 cells cells_module (match_lines, write_lines, read_lines, mismatch_lines, tag_wires, CLK);
 tags tags_module(match_lines, set, select_first, tag_wires, CLK);
@@ -25,16 +28,16 @@ initial begin
      forever #5 CLK = ~CLK;  
 end 
 
-initial begin
-  $monitor("\n clk = %ggit,\n comparand = %b, \n mask = %b, \n tags =  %b \n read = %b", $time, comparand, mask, tag_wires, read_lines);
-end
-
 initial begin 
-    comparand = 5;
-    mask = '1;
+    $dumpfile("top_tb.vcd");
+    $dumpvars(0,tb);
+    comparand = 88;
+    mask = 'b1;
     set = 1;
-    #10;
+    #5;
     set = 0;
     perform_search = 1;
+    #100;
+    $finish;
 end 
 endmodule

@@ -1,6 +1,7 @@
 module cells(match_lines, write_lines, read_lines, mismatch_lines, tags, CLK);
 input CLK;
 input [99:0] tags;
+
 input [63:0] mismatch_lines;
 input [63:0] write_lines;
 output wire [99:0] match_lines;
@@ -23,18 +24,20 @@ for(i = 0; i<100; i = i+1) begin
 end
 
 
+
+//write lines
 for (i = 0; i<100; i = i+1) begin
   for (j = 0; j<32; j = j+1) begin
     srff_behave flipflop(store_wires[i][j], (tags[i] && write_lines[2*j]), (tags[i] && write_lines[2*j+1]), CLK);
   end
 end
 
+
 /*
 always@(posedge CLK) begin
   store <= store_wires;
 end
 */
-
 
 integer idx;
 initial begin

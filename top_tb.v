@@ -21,8 +21,36 @@ compare compare_module (CLK, comparand,mask,perform_search, mismatch_lines);
 cells cells_module (match_lines, write_lines, read_lines, mismatch_lines, tag_wires, CLK);
 tags tags_module(match_lines, set, select_first, tag_wires, some_none, CLK);
 
+task search;
+input [31:0] comparand_value;
+input [31:0] mask_value;
+begin
+  comparand = comparand_value;
+  mask = mask_value;
+  set = 1;
+  #5;
+  set = 0;
+  perform_search = 1;
 
+end
+endtask
 
+task selectFirst;
+input [31:0] comparand_value;
+input [31:0] mask_value;
+begin
+  comparand = comparand_value;
+  mask = mask_value;
+  set = 1;
+  #5;
+  set = 0;
+  perform_search = 1;
+  #20;
+  perform_search = 0;
+  select_first = 1;
+
+end
+endtask
 
 initial begin
   CLK=0;
@@ -30,21 +58,15 @@ initial begin
 end 
 
 initial begin
-  //$dumpfile("top_tb.vcd");
-  //$dumpvars(0,tb);
+  $dumpfile("top_tb.vcd");
+  $dumpvars(0,tb);
   $monitor("%b\n", tag_wires);
 
 end
 
 initial begin 
-    comparand = 0;
-    mask = 1;
-    set = 1;
-    #5;
-    set = 0;
-    perform_search = 1;
-    select_first = 1;
-    #100;
-    $finish;
+  selectFirst(5,5);
+  #100;
+  $finish;
 end 
 endmodule

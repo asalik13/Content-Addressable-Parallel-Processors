@@ -25,32 +25,48 @@ task search;
 input [31:0] comparand_value;
 input [31:0] mask_value;
 begin
+  $display("searching...");
   comparand = comparand_value;
   mask = mask_value;
   set = 1;
-  #5;
+  #100;
   set = 0;
+  #100;
   perform_search = 1;
-
+  #100;
+  perform_search = 0;
+  #100;
 end
 endtask
 
 task selectFirst;
-input [31:0] comparand_value;
-input [31:0] mask_value;
 begin
-  comparand = comparand_value;
-  mask = mask_value;
-  set = 1;
-  #5;
-  set = 0;
-  perform_search = 1;
-  #20;
-  perform_search = 0;
+  $display("selecting first...");
   select_first = 1;
-
+  #20;
+  select_first = 0;
+  #20;
 end
 endtask
+
+task write;
+input [31:0] value;
+input [31:0] mask;
+integer i;
+begin
+$display("writing...");
+write_lines = 0;
+for(i = 0;  i<32; i = i+1)
+  begin
+    write_lines[2*i] = value[i] && mask[i];
+    write_lines[2*i + 1] = (!value[i]) && mask[i];
+  end
+#100;
+write_lines = '0;
+#1000;
+end
+endtask
+
 
 initial begin
   CLK=0;
@@ -60,13 +76,21 @@ end
 initial begin
   $dumpfile("top_tb.vcd");
   $dumpvars(0,tb);
-  $monitor("%b\n", tag_wires);
+  $monitor("tags: %b\n", tag_wires);
 
 end
 
-initial begin 
-  selectFirst(5,5);
-  #100;
+integer i;
+initial begin: main
+  set = 1;
+  write(0, '1);
+  set = 0;
+  for(i = 1; i <= 100; i = i + 1) begin: loop
+    search(0, '1);
+    selectFirst();
+    write(i, '1);
+  end
+  search(35, '1);
   $finish;
 end 
 endmodule

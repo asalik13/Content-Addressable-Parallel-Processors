@@ -33,19 +33,19 @@ for (i = 0; i<100; i = i+1) begin
 end
 
 
-/*
+
 always@(posedge CLK) begin
   store <= store_wires;
 end
-*/
 
+/*
 integer idx;
 initial begin
 for(idx = 0; idx <100; idx = idx + 1) begin
 store[idx] = idx;
 end
 end
-
+*/
 
 
   //read_lines

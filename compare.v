@@ -16,7 +16,7 @@ genvar i;
 for(i = 0;  i<32; i = i+1)
   begin
     assign mismatch_lines[i + i] = perform_search && comparand[i] && mask[i];
-    assign mismatch_lines[i + i + 1] = perform_search && !comparand[i] && mask[i];
+    assign mismatch_lines[i + i + 1] = perform_search && (!comparand[i]) && mask[i];
   end
 
 endmodule

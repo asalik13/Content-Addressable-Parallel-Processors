@@ -48,7 +48,8 @@ begin
   #20;
 end
 endtask
-
+//101
+//write(56, 1111111111);
 task write;
 input [31:0] value;
 input [31:0] mask;
@@ -68,6 +69,7 @@ end
 endtask
 
 
+
 initial begin
   CLK=0;
   forever #5 CLK = ~CLK;  
@@ -82,9 +84,18 @@ end
 
 integer i;
 initial begin: main
+
+
+
+
   set = 1;
   write(0, '1);
   set = 0;
+
+
+
+
+
   for(i = 1; i <= 100; i = i + 1) begin: loop
     search(0, '1);
     selectFirst();

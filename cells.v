@@ -6,10 +6,10 @@ input [63:0] mismatch_lines;
 input [63:0] write_lines;
 output wire [99:0] match_lines;
 output wire [31:0] read_lines;
-reg [99:0][31:0] store;
+reg [31:0] store [99:0];
 wire [31:0] temp_search_wires [99:0];
 wire [31:0] temp_read_wires [99:0];
-wire [99:0][31:0] store_wires;
+wire [31:0] store_wires [99:0];
 
 
 
@@ -33,9 +33,11 @@ for (i = 0; i<100; i = i+1) begin
 end
 
 
-
+integer idx;
 always@(posedge CLK) begin
-  store <= store_wires;
+  for(idx = 0; idx < 100; idx = idx+1) begin
+    store[idx] <= store_wires[idx];
+  end
 end
 
 /*

@@ -1,6 +1,6 @@
 module tb; 
-localparam num_bits = 2;
-localparam num_cells = 10;
+localparam num_bits = 32;
+localparam num_cells = 100;
 
 reg CLK = 1'b1;
 reg [num_bits - 1:0] comparand;

@@ -40,32 +40,17 @@ module usbserial_tbx (
         if ( clk_locked )
             reset_cnt <= reset_cnt + reset;
 
-  parameter TEXT_LEN=14;
+  parameter TEXT_LEN=32;
+  
   // Create the text string
-  reg [7:0] text [0:TEXT_LEN-1];
+  reg [8*TEXT_LEN - 1:0] text;
+  reg [4:0] length;
   reg [3:0] char_count =4'b0;
 
     // uart pipeline in
     reg [7:0] uart_in_data;
     reg       uart_in_valid = 1'b1;
     wire       uart_in_ready;
-  initial begin
-    text[0]  <= "H";
-    text[1]  <= "e";
-    text[2]  <= "l";
-    text[3]  <= "l";
-    text[4]  <= "o";
-    text[5]  <= " ";
-    text[6]  <= "W";
-    text[7]  <= "o";
-    text[8]  <= "r";
-    text[9]  <= "l";
-    text[10] <= "d";
-    text[11] <= "!";
-    text[12] <= "\r";
-    text[13] <= "\n";
-  end
-
 
     wire [7:0] uart_out_data;
     wire       uart_out_valid;
@@ -102,32 +87,42 @@ module usbserial_tbx (
   reg state = STATE_WAIT;
   reg [23:0] cnt = 24'b0;
 
+task sendMessage;
+  input [8*TEXT_LEN - 1:0] string;
+  input [4:0] size;
+  begin
+    text <= string;
+    length <= size;
+    state <= STATE_TX;
+  end
+endtask
+
 always @(posedge clk_48mhz)
   begin
       uart_out_ready <= 1;
-      cnt <= cnt +1'b1;
       case(state)
       STATE_WAIT:
         begin
             uart_in_valid <= 0;
-            if (uart_out_data == "a")
-            begin
-                state <= STATE_TX;
-            end
+            case(uart_out_data)
+            "a":
+                sendMessage("Ayush\r\n", 7);
+            "b":
+                sendMessage("Salik\r\n", 7);
+            endcase
         end
       STATE_TX:
         begin
 
           if (uart_in_ready || (~uart_in_valid && ~uart_in_ready))
           begin
-              uart_in_data <= text[char_count];
+              uart_in_data <= text[8*(length - char_count)- 1: 8*(length - char_count - 1)];
               uart_in_valid <= 1;
               char_count <= char_count +1;
-              if (char_count +1 == TEXT_LEN)
+              if (char_count +1 == length)
               begin 
                   char_count <= 0;
                   state <= STATE_WAIT;
-                  cnt <= 24'b0;
               end 
           end
         end

@@ -2,11 +2,6 @@
   USB Serial
 */
 
-/*
-    USB Serial
-
-*/
-
 module usbserial_tbx (
         input  pin_clk,
 
@@ -26,13 +21,6 @@ module usbserial_tbx (
     // Use an icepll generated pll
     pll pll48( .clock_in(pin_clk), .clock_out(clk_48mhz), .locked( clk_locked ) );
 
-    // LED
-    reg [24:0] ledCounter;
-    always @(posedge clk_48mhz) begin
-        ledCounter <= ledCounter + 1;
-    end
-    assign pin_led = ledCounter[ 24 ];
-
     // Generate reset signal
     reg [5:0] reset_cnt = 0;
     wire reset = ~reset_cnt[5];
@@ -40,22 +28,15 @@ module usbserial_tbx (
         if ( clk_locked )
             reset_cnt <= reset_cnt + reset;
 
-  parameter TEXT_LEN=32;
-  
-  // Create the text string
-  reg [8*TEXT_LEN - 1:0] text;
-  reg [4:0] length;
-  reg [3:0] char_count =4'b0;
-
     // uart pipeline in
     reg [7:0] uart_in_data;
     reg       uart_in_valid = 1'b1;
     wire       uart_in_ready;
 
+    // uart pipeline out
     wire [7:0] uart_out_data;
     wire       uart_out_valid;
     reg       uart_out_ready;
-    // assign debug = { uart_in_valid, uart_in_ready, reset, clk_48mhz };
 
 
 
@@ -81,19 +62,55 @@ module usbserial_tbx (
     );
 
 
-  parameter STATE_WAIT = 1'b0;
-  parameter STATE_TX = 1'b1;
+parameter STATE_WAIT = 1'b0;
+parameter STATE_TX = 1'b1;
 
-  reg state = STATE_WAIT;
-  reg [23:0] cnt = 24'b0;
+reg state = STATE_WAIT;
+
+// Create the output string
+parameter OUTPUT_LEN=32;
+reg [8*OUTPUT_LEN - 1:0] output_text;
+reg [4:0] output_length;
+reg [4:0] output_char_count = 0;
+// Create the input string
+parameter INPUT_LEN = 32;
+reg [INPUT_LEN*8 - 1:0] input_text;
+reg [4:0] input_char_count = 0;
 
 task sendMessage;
-  input [8*TEXT_LEN - 1:0] string;
+  input [8*OUTPUT_LEN - 1:0] string;
   input [4:0] size;
   begin
-    text <= string;
-    length <= size;
+    output_text <= string;
+    output_length <= size;
     state <= STATE_TX;
+    input_char_count = 0;
+  end
+endtask
+
+// This recieves the reverse of a string (Endian Swap)
+task getMessage;
+  begin
+    uart_in_valid <= 0;
+    if (uart_out_valid) begin
+        if(uart_out_data == "\r" || input_char_count == INPUT_LEN) begin
+            doStuff();
+        end
+        else begin
+          input_text[8*(input_char_count + 1)- 1: 8*(input_char_count)] <= uart_out_data;
+          input_char_count <= input_char_count + 1;
+        end
+      end
+    end
+endtask
+
+// central control
+task doStuff;
+  begin
+    case(input_text)
+          "trats": sendMessage("Starting the CAPP...\r\n", 22);
+          "etirw": sendMessage("Enter data now..\r\n", 18);
+    endcase
   end
 endtask
 
@@ -103,25 +120,23 @@ always @(posedge clk_48mhz)
       case(state)
       STATE_WAIT:
         begin
-            uart_in_valid <= 0;
-            case(uart_out_data)
-            "a":
-                sendMessage("Ayush\r\n", 7);
-            "b":
-                sendMessage("Salik\r\n", 7);
-            endcase
+            getMessage();
         end
       STATE_TX:
         begin
 
           if (uart_in_ready || (~uart_in_valid && ~uart_in_ready))
           begin
-              uart_in_data <= text[8*(length - char_count)- 1: 8*(length - char_count - 1)];
+              // send next character
+              uart_in_data <= output_text[8*(output_length - output_char_count)- 1: 8*(output_length - output_char_count - 1)];
+              // enable write
               uart_in_valid <= 1;
-              char_count <= char_count +1;
-              if (char_count +1 == length)
+              // increment char count
+              output_char_count <= output_char_count +1;
+              // do this if message is sent
+              if (output_char_count +1 == output_length)
               begin 
-                  char_count <= 0;
+                  output_char_count <= 0;
                   state <= STATE_WAIT;
               end 
           end

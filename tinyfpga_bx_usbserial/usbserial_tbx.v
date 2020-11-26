@@ -110,6 +110,7 @@ task doStuff;
     case(input_text)
           "trats": sendMessage("Starting the CAPP...\r\n", 22);
           "etirw": sendMessage("Enter data now..\r\n", 18);
+          default: sendMessage({input_text, "\r\n"}, input_char_count + 2);
     endcase
   end
 endtask
@@ -137,6 +138,7 @@ always @(posedge clk_48mhz)
               if (output_char_count +1 == output_length)
               begin 
                   output_char_count <= 0;
+                  input_text <= 0;
                   state <= STATE_WAIT;
               end 
           end

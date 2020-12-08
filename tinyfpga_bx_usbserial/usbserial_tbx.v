@@ -68,18 +68,18 @@ parameter STATE_TX = 1'b1;
 reg state = STATE_WAIT;
 
 // Create the output string
-parameter OUTPUT_LEN=32;
+parameter OUTPUT_LEN=64;
 reg [8*OUTPUT_LEN - 1:0] output_text;
-reg [4:0] output_length;
-reg [4:0] output_char_count = 0;
+reg [7:0] output_length;
+reg [7:0] output_char_count = 0;
 // Create the input string
-parameter INPUT_LEN = 32;
+parameter INPUT_LEN = 64;
 reg [INPUT_LEN*8 - 1:0] input_text;
-reg [4:0] input_char_count = 0;
+reg [7:0] input_char_count = 0;
 
 task sendMessage;
   input [8*OUTPUT_LEN - 1:0] string;
-  input [4:0] size;
+  input [7:0] size;
   begin
     output_text <= string;
     output_length <= size;

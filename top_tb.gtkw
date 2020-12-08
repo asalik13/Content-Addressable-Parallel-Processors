@@ -1,22 +1,23 @@
 [*]
 [*] GTKWave Analyzer v3.3.107 (w)1999-2020 BSI
-[*] Mon Oct 26 18:09:00 2020
+[*] Tue Dec  8 08:36:03 2020
 [*]
 [dumpfile] "/Users/ayushsalik/research/tinyfpga-bx-research/cam/top_tb.vcd"
-[dumpfile_mtime] "Mon Oct 26 18:02:36 2020"
-[dumpfile_size] 2434266
+[dumpfile_mtime] "Tue Dec  8 08:34:17 2020"
+[dumpfile_size] 149215
 [savefile] "/Users/ayushsalik/research/tinyfpga-bx-research/cam/top_tb.gtkw"
 [timestart] 0
-[size] 1440 900
-[pos] -1 -24
+[size] 1440 855
+[pos] -1 -1
 *0.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb.
 [sst_width] 193
 [signals_width] 1148
 [sst_expanded] 1
 [sst_vpaned_height] 274
-@22
-tb.read_lines[31:0]
 @29
-tb.tag_wires[99:0]
+tb.tag_wires[4:0]
+@24
+tb.cnt[9:0]
 [pattern_trace] 1
 [pattern_trace] 0

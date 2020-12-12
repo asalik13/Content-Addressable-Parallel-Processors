@@ -92,6 +92,9 @@ module usbserial_tbx (
     parameter SET_MASK_1 = 9;
     parameter SET_MASK_2 = 10;
     parameter GET_MASK = 11;
+    parameter GET_TAGS = 12
+    parameter SELECT_FIRST_1 = 13;
+    parameter SELECT_FIRST_2 = 14;
     // usb uart - this instanciates the entire USB device.
     usb_uart uart (
         .clk_48mhz  (clk_48mhz),
@@ -171,10 +174,19 @@ module usbserial_tbx (
       end
       CHOOSE_STATE: begin
         case(input_text)
+          //set comparand
           "dnarapmoc-tes": curr_state <= SET_COMPARAND_1;
+          // get comparand
           "dnarapmoc-teg": curr_state <= GET_COMPARAND;
+          // set mask
           "ksam-tes": curr_state <= SET_MASK_1;
+          // get mask
           "ksam-teg": curr_state <= GET_MASK;
+          // select first
+          "tsrif-tceles": curr_state <= SELECT_FIRST_1;
+          // get tags
+          "sgat-teg": curr_state <= GET_TAGS;
+          // error 
           default: curr_state <= ERROR;
         endcase
         // Clear input
@@ -229,6 +241,19 @@ module usbserial_tbx (
         curr_state <= SEND;
         next_state <= LISTEN;
       end
+      SELECT_FIRST_1: begin
+        select_first <= 1;
+        delay <= 1;
+        curr_state <= IDLE;
+        next_state <= SELECT_FIRST_2;
+      end
+      SELECT_FIRST_2: begin
+        select_first <= 0;
+        delay <= 1;
+        curr_state <= IDLE;
+        next_state <= LISTEN;
+      end
+
 
     endcase
   end

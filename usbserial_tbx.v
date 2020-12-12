@@ -38,20 +38,20 @@ module usbserial_tbx (
     reg       uart_out_ready;
 
     // Output string
-    parameter OUTPUT_LEN=32;
+    parameter OUTPUT_LEN=16;
     reg [8*OUTPUT_LEN - 1:0] output_text;
     reg [7:0] output_length;
     reg [7:0] output_char_count = 0;
 
     // Input string
-    parameter INPUT_LEN = 32;
+    parameter INPUT_LEN = 16;
     reg [INPUT_LEN*8 - 1:0] input_text;
     reg [7:0] input_char_count = 0;
 
 
-    // cam parameters
+    // cam parameters (keep these as multiples of 8)
     localparam num_bits = 32;
-    localparam num_cells = 100;
+    localparam num_cells = 16;
 
     // cam in
     reg [num_bits - 1:0] comparand;
@@ -69,15 +69,9 @@ module usbserial_tbx (
     reg [31:0] cnt = 0;
     reg [31:0] delay = 0;
 
-    /*
-    reg RECIEVE = 1;
-    reg SEND = 0;
-    reg IDLE = 0;
-    reg DO = 0;
-    */
     // state control
-    reg [9:0] curr_state = LISTEN;
-    reg [9:0] next_state;
+    reg [4:0] curr_state = LISTEN;
+    reg [4:0] next_state;
 
     // defining states
     parameter IDLE = 0;
@@ -92,9 +86,15 @@ module usbserial_tbx (
     parameter SET_MASK_1 = 9;
     parameter SET_MASK_2 = 10;
     parameter GET_MASK = 11;
-    parameter GET_TAGS = 12
+    parameter GET_TAGS = 12;
     parameter SELECT_FIRST_1 = 13;
     parameter SELECT_FIRST_2 = 14;
+    parameter SET_HIGH = 15;
+    parameter SET_LOW = 16;
+    parameter SEARCH_1 = 17;
+    parameter SEARCH_2 = 18;
+    parameter SEARCH_3 = 19;
+    parameter SEARCH_4 = 20;
     // usb uart - this instanciates the entire USB device.
     usb_uart uart (
         .clk_48mhz  (clk_48mhz),
@@ -175,17 +175,21 @@ module usbserial_tbx (
       CHOOSE_STATE: begin
         case(input_text)
           //set comparand
-          "dnarapmoc-tes": curr_state <= SET_COMPARAND_1;
+          "a": curr_state <= SET_COMPARAND_1;
           // get comparand
-          "dnarapmoc-teg": curr_state <= GET_COMPARAND;
+          "b": curr_state <= GET_COMPARAND;
           // set mask
-          "ksam-tes": curr_state <= SET_MASK_1;
+          "c": curr_state <= SET_MASK_1;
           // get mask
-          "ksam-teg": curr_state <= GET_MASK;
+          "d": curr_state <= GET_MASK;
           // select first
-          "tsrif-tceles": curr_state <= SELECT_FIRST_1;
+          "e": curr_state <= SELECT_FIRST_1;
           // get tags
-          "sgat-teg": curr_state <= GET_TAGS;
+          "f": curr_state <= GET_TAGS;
+          // change the set-line to high
+          "g": curr_state <= SET_HIGH;
+          // change the set-line to low
+          "h": curr_state <= SET_LOW;
           // error 
           default: curr_state <= ERROR;
         endcase
@@ -241,19 +245,32 @@ module usbserial_tbx (
         curr_state <= SEND;
         next_state <= LISTEN;
       end
+      GET_TAGS: begin
+        output_text <= {tag_wires, "\r\n"};
+        output_length <= 4;
+        curr_state <= SEND;
+        next_state <= LISTEN;
+      end
       SELECT_FIRST_1: begin
         select_first <= 1;
-        delay <= 1;
+        delay <= 5;
         curr_state <= IDLE;
         next_state <= SELECT_FIRST_2;
       end
       SELECT_FIRST_2: begin
         select_first <= 0;
-        delay <= 1;
+        delay <= 5;
         curr_state <= IDLE;
         next_state <= LISTEN;
       end
-
+      SET_HIGH:begin
+        set <= 1;
+        curr_state <= LISTEN;
+      end
+      SET_LOW: begin
+        set <= 0;
+        curr_state <= LISTEN;
+      end
 
     endcase
   end

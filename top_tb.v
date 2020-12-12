@@ -3,8 +3,8 @@
 module tb; 
 
 reg  pin_clk;
-localparam num_bits = 16;
-localparam num_cells = 5;
+localparam num_bits = 32;
+localparam num_cells = 100;
 
 reg [num_bits - 1:0] comparand;
 reg [num_bits - 1:0] mask;
@@ -12,8 +12,7 @@ reg perform_search;
 reg set;
 reg select_first;
 reg [2*num_bits - 1:0] write_lines;
-reg [2:0] state;
-reg [9:0] cnt = 0;
+
 wire [num_cells - 1:0] tag_wires;
 wire [num_bits - 1:0] read_lines;
 wire clk_48mhz;
@@ -21,6 +20,19 @@ wire clk_locked;
 
 // Use an icepll generated pll
 //pll pll48( .clock_in(pin_clk), .clock_out(clk_48mhz), .locked( clk_locked ) );
+
+
+reg [3:0] state;
+reg [9:0] cnt = 0;
+reg [9:0] delay = 0;
+
+reg RECIEVE;
+reg SEND;
+reg IDLE;
+reg SET;
+reg SELECT_FIRST;
+reg LOAD_DATA;
+reg SEARCH;
 
 
 cam #(
@@ -53,10 +65,23 @@ CAM_EXAMPLE(
 
 
   always @(posedge pin_clk) begin
-    if(cnt<30 == 0) state <= 3'b001;
-    else state <= 3'b100;
-    cnt <= cnt + 1;
-    if(cnt == 60) cnt <= 0;
+    if(IDLE) begin
+      // State for waiting for delay clock cycles
+      cnt <= cnt + 1;
+      if(cnt == delay) begin
+        cnt <= 0;
+        IDLE <= 0;
+      end
+    end
+    else begin 
+      // When the CAPP can listen for a message and do tasks
+      if(SEND)begin 
+        // For sending a message
+      end
+      else if(RECIEVE) begin
+        // For recieving a message
+      end
+    end
   end
 
 

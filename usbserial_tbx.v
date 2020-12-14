@@ -16,6 +16,8 @@ module usbserial_tbx (
     wire clk_48mhz;
 
     wire clk_locked;
+    //misc
+    integer i;
 
     // Use an icepll generated pll
     pll pll48( .clock_in(pin_clk), .clock_out(clk_48mhz), .locked( clk_locked ) );
@@ -93,8 +95,8 @@ module usbserial_tbx (
     parameter SET_LOW = 16;
     parameter SEARCH_1 = 17;
     parameter SEARCH_2 = 18;
-    parameter SEARCH_3 = 19;
-    parameter SEARCH_4 = 20;
+    parameter WRITE_1 = 19;
+    parameter READ = 20;
     // usb uart - this instanciates the entire USB device.
     usb_uart uart (
         .clk_48mhz  (clk_48mhz),
@@ -190,6 +192,9 @@ module usbserial_tbx (
           "g": curr_state <= SET_HIGH;
           // change the set-line to low
           "h": curr_state <= SET_LOW;
+          "i": curr_state <= WRITE;
+          "j": curr_state <= READ;
+          "k": curr_state <= SEARCH_1;
           // error 
           default: curr_state <= ERROR;
         endcase
@@ -270,6 +275,31 @@ module usbserial_tbx (
       SET_LOW: begin
         set <= 0;
         curr_state <= LISTEN;
+      end
+      SEARCH_1: begin
+        perform_search <= 1;
+        delay <= 1024;
+        curr_state <= IDLE;
+        next_state <= SEARCH_2;
+      end
+      SEARCH_2: begin
+        perform_search <= 0;
+        delay <= 1024;
+        curr_state <= IDLE;
+        next_state <= LISTEN;
+      end
+      READ: begin
+        output_text <= {read_lines, "\r\n"};
+        output_length <= 6;
+        curr_state <= SEND;
+        next_state <= LISTEN;
+      end
+      WRITE_1: begin
+        for(i = 0;  i<num_bits; i = i+1)
+        begin
+            write_lines[2*i] <= comparand[i] && mask[i];
+            write_lines[2*i + 1] <= (!comparand[i]) && mask[i];
+        end
       end
 
     endcase

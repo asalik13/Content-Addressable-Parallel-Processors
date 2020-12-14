@@ -1,16 +1,14 @@
 module tags
 #( parameter num_bits = 32, parameter num_cells = 100 )
-(match_lines, set, select_first, tags, some_none, CLK);
+(match_lines, set, select_first, tag_wires, some_none, CLK);
 
 input wire [num_cells - 1:0] match_lines;
 input wire select_first;
 input wire set;
+input wire [num_cells - 1:0] tag_wires;
+
 input CLK;
 output [num_cells - 1:0] some_none;
-output reg [num_cells - 1:0] tags;
-
-
-wire [num_cells - 1:0] tag_wires;
 wire [num_cells - 1:0] temp;
 assign some_none[0] = tag_wires[0];
 srff_behave flip (tag_wires[0], set, match_lines[0], CLK);
@@ -25,9 +23,5 @@ for(i = 1; i<num_cells; i=i+1) begin: random
 end
 endgenerate
 
-
-always@(posedge CLK) begin
-tags <= tag_wires;
-end
 
 endmodule

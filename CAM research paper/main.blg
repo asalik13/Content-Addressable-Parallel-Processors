@@ -1,0 +1,62 @@
+This is BibTeX, Version 0.99d (TeX Live 2019)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: main.aux
+The style file: IEEEtran.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: IEEEabrv.bib
+Database file #2: references.bib
+Warning--I didn't find a database entry for "webpage"
+Warning--I didn't find a database entry for "FundConDep"
+Warning--I didn't find a database entry for "exampleofjournalarticle"
+Warning--I didn't find a database entry for "exampleofconferencepaper"
+-- IEEEtran.bst version 1.14 (2015/08/26) by Michael Shell.
+-- http://www.michaelshell.org/tex/ieeetran/bibtex/
+-- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
+
+Done.
+You've used 2 entries,
+            4087 wiz_defined-function locations,
+            1356 strings with 17848 characters,
+and the built_in function-call counts, 714 in all, are:
+= -- 38
+> -- 5
+< -- 0
++ -- 3
+- -- 1
+* -- 37
+:= -- 131
+add.period$ -- 4
+call.type$ -- 2
+change.case$ -- 1
+chr.to.int$ -- 0
+cite$ -- 2
+duplicate$ -- 54
+empty$ -- 80
+format.name$ -- 1
+if$ -- 144
+int.to.chr$ -- 0
+int.to.str$ -- 2
+missing$ -- 11
+newline$ -- 31
+num.names$ -- 1
+pop$ -- 40
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 2
+skip$ -- 50
+stack$ -- 0
+substring$ -- 1
+swap$ -- 24
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 5
+type$ -- 2
+warning$ -- 0
+while$ -- 1
+width$ -- 3
+write$ -- 37
+(There were 4 warnings)

@@ -1,0 +1,9 @@
+\section{The Finite State Machine}
+The FSM is the crux of interacting with the CAM and making it carry out complex algorithms. 
+It has numerous states, some of them are sending or receiving data, loading data into the CAM, selecting first, searching, reading, setting the comparand and mask as well as writing. 
+The base UART module used is from David Things' Github repository. \cite{uart} This works on a 48MHz clock cycle.
+To reduce complexities and avoid additional LUTs usage, we used the same clock speed throughout the project. 
+\\\\
+As shown in figure 4 (TODO), our FSM acts as a way to carry out procedural tasks while avoiding the limit of 21 ns by linking states together. 
+Therefore, a task may trigger several states before it returns to the default state. 
+For example, th

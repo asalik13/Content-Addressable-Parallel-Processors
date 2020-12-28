@@ -1,0 +1,18 @@
+\section{experimentation}
+The circuitry of a CAM can be broken down into 3 main parts. The tags, the cells and the search registers. 
+The search registers are the least complex circuits in a CAM. They consist of 2 different registers, the comparand and the mask. 
+The comparand is the word to search for, and the mask contains locations of bits in the word to ignore during the search.
+For example, if we want to ignore the third character (or a byte) in our search, we would write mask bits [16:23] as high.
+\begin{figure}
+    \includegraphics[width=1\columnwidth]{search_registers.png}
+    \caption[Short text]{Circuitry for match lines from the search registers}
+\end{figure}
+\\\\
+The second most complex circuitry is found in the tags.
+Tags are bits for all cells, if the bit of a cell is high after a search, it means that the word in that cell was found in the search. 
+In other words, after a search, the cells with high tag bits are the ones that were found. 
+As all the tag bits of a CAM have to change in constant time, match lines from the search registers go through each cell to create mismatch lines which turn irrelevant tags off.
+\begin{figure}
+    \includegraphics[width=1\columnwidth=0.5]{tag_registers.png}
+    \caption[Short text]{Circuitry for tag registers}
+\end{figure}

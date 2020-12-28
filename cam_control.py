@@ -1,5 +1,5 @@
 import serial
-import bitarray
+from bitarray import bitarray
 import os
 import time
 
@@ -11,7 +11,7 @@ class CAM:
         self.port = serial.Serial(port, 9600)
 
     def get_tags(self):
-        b = bitarray.bitarray()
+        b = bitarray()
         self.port.write(b"f\r\n")
         x = self.port.readline()
         self.port.readline()
@@ -36,7 +36,7 @@ class CAM:
         self.port.readline()
         return mask
 
-    def set_mask(self,mask):
+    def set_mask(self,mask=bitarray([True]*32, endian='little')):
         self.mask = mask
         self.port.write(b"c\r\n")
         self.port.write(mask[::-1] + b"\r\n")
@@ -62,6 +62,8 @@ class CAM:
     def select_first(self):
         self.port.write(b"e\r\n")
 
+    def 
+
 cam = CAM("/dev/tty.usbmodem14201")
 
 
@@ -78,8 +80,9 @@ cam.select_first()
 print(cam.get_tags())
 
 cam.set_comparand(b"funn")
-
 print(cam.get_comparand())
+
+
 
 
 

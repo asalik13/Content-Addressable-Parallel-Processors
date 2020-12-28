@@ -1,0 +1,17 @@
+\section{Introduction}
+Content Addressable Memory (CAM) is an alternate architecture for memory. Unlike Random Access Memory (RAM) which works by 
+performing operations for a word by using a memory address, a CAM is able to select multiple memory addresses based on a word. 
+Furthermore, a CAM can perform operations like multi-writing into and reading from multiple selected cells in constant time.
+This is the reason CAMs are so useful in routers and bridges as they are a much faster way to search for IP addresses to send packets to.
+\\\\  
+CAMs are usually available in the form of Application Specific Integrated Chipsets (ASICs) and are used in routers, databases and more.
+They can be divided into two broad categories, one being Binary CAMs and the other Ternary. 
+Ternary CAMs come with the added flexibility of searching for words with masked bits, which is very similar to the regex for '.'. 
+Of course, this comes with added circuity to each cell. 
+\\\\ 
+The goal of this project was to design a module for an expandable Ternary CAM that is synthesizable on a FPGA using modern HDL tools. 
+We also integrated a finite state machine that encapsulated the T-CAM and a Serial UART module. 
+This enabled the researchers to directly communicate with the T-CAM from a CPU using serial communication.
+The FSM enabled commands for reading, writing, selecting first as well as searching. 
+\\\\
+CAMs have applications 

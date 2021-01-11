@@ -480,13 +480,11 @@ INPUT /usr/local/texlive/2019/texmf-dist/fonts/vf/adobe/times/ptmrc8t.vf
 INPUT /usr/local/texlive/2019/texmf-dist/fonts/tfm/adobe/times/ptmr8r.tfm
 INPUT /Users/ayushsalik/research/tinyfpga-bx-research/cam/CAM research paper/sections/results.tex
 INPUT /Users/ayushsalik/research/tinyfpga-bx-research/cam/CAM research paper/sections/results.tex
-INPUT /Users/ayushsalik/research/tinyfpga-bx-research/cam/CAM research paper/sections/conclusion.tex
-INPUT /Users/ayushsalik/research/tinyfpga-bx-research/cam/CAM research paper/sections/conclusion.tex
 INPUT /Users/ayushsalik/research/tinyfpga-bx-research/cam/CAM research paper/sections/discussion.tex
 INPUT /Users/ayushsalik/research/tinyfpga-bx-research/cam/CAM research paper/sections/discussion.tex
-INPUT /Users/ayushsalik/research/tinyfpga-bx-research/cam/CAM research paper/sections/acknowledgement.tex
-INPUT /Users/ayushsalik/research/tinyfpga-bx-research/cam/CAM research paper/sections/acknowledgement.tex
 INPUT /usr/local/texlive/2019/texmf-dist/fonts/vf/adobe/times/ptmr8t.vf
+INPUT /Users/ayushsalik/research/tinyfpga-bx-research/cam/CAM research paper/sections/acknowledgement.tex
+INPUT /Users/ayushsalik/research/tinyfpga-bx-research/cam/CAM research paper/sections/acknowledgement.tex
 INPUT /Users/ayushsalik/research/tinyfpga-bx-research/cam/CAM research paper/main.bbl
 INPUT /Users/ayushsalik/research/tinyfpga-bx-research/cam/CAM research paper/main.bbl
 INPUT /usr/local/texlive/2019/texmf-dist/fonts/vf/adobe/times/ptmb8t.vf

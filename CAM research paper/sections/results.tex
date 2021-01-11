@@ -1,1 +1,12 @@
 \section{Results}
+A Content Addressable Parallel Processor was successfully completed. 
+The machine works in conjunction with a machine with Von Neumann architecture that is 
+responsible for streaming commands to the CAPP which enacts them on the CAM. 
+The commands are sent over serial using a UART module on the FPGA\\\\
+As the CAPP works on the principles of a CAM, 
+it can search for matching cycles in constant time, 
+and write to those in constant time too. 
+\\\\
+We also wrote a Python library that is used to initialize the CAPP and send commands to it 
+from the external Von Neumann machine. 
+This makes it easy to transmit commands and read cells in the CAM. 

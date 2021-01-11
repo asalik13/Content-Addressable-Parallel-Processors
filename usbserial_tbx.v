@@ -95,7 +95,7 @@ module usbserial_tbx (
     parameter SET_LOW = 16;
     parameter SEARCH_1 = 17;
     parameter SEARCH_2 = 18;
-    parameter WRITE_1 = 19;
+    parameter WRITE = 19;
     parameter READ = 20;
     // usb uart - this instanciates the entire USB device.
     usb_uart uart (
@@ -278,13 +278,13 @@ module usbserial_tbx (
       end
       SEARCH_1: begin
         perform_search <= 1;
-        delay <= 1024;
+        delay <= 10;
         curr_state <= IDLE;
         next_state <= SEARCH_2;
       end
       SEARCH_2: begin
         perform_search <= 0;
-        delay <= 1024;
+        delay <= 10;
         curr_state <= IDLE;
         next_state <= LISTEN;
       end
@@ -294,12 +294,13 @@ module usbserial_tbx (
         curr_state <= SEND;
         next_state <= LISTEN;
       end
-      WRITE_1: begin
+      WRITE: begin
         for(i = 0;  i<num_bits; i = i+1)
         begin
             write_lines[2*i] <= comparand[i] && mask[i];
             write_lines[2*i + 1] <= (!comparand[i]) && mask[i];
         end
+        curr_state <= LISTEN;
       end
 
     endcase

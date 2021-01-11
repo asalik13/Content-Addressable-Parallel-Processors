@@ -7,8 +7,6 @@ import time
 
 class CAM:
     def __init__(self, port):
-        os.system('tinyprog -b')
-        time.sleep(1)
         self.port = serial.Serial(port, 9600)
 
     def get_tags(self):
@@ -20,10 +18,11 @@ class CAM:
         binary = b.to01()
         return binary
 
-    def set_comparand(self, comparand):
-        self.comparand = comparand
+    def set_comparand(self, comparand=bitarray(32*[False]).tobytes()):
+
+        self.comparand = comparand + (4 - len(comparand))* b"\0"
         self.port.write(b"a\r\n")
-        self.port.write(comparand[::-1] + b"\r\n")
+        self.port.write(self.comparand[::-1] + b"\r\n")
 
     def get_comparand(self):
         self.port.write(b"b\r\n")
@@ -37,19 +36,32 @@ class CAM:
         self.port.readline()
         return mask
 
-    def set_mask(self,mask=bitarray([True]*32, endian='little')):
+    def set_mask(self, mask=bitarray([True]*32).tobytes()):
         self.mask = mask
         self.port.write(b"c\r\n")
-        self.port.write(mask[::-1] + b"\r\n")
+        self.port.write(self.mask[::-1] + b"\r\n")
     
-    def write(self):
+    def write(self, word):
+        prevComparand = self.comparand
+        prevMask = self.mask
+        self.set_comparand(word)
+        self.set_mask()
         self.port.write(b"i\r\n")
+        self.set_comparand(prevComparand)
+        self.set_mask(prevMask)
+
     
     def set_high(self):
         self.port.write(b"g\r\n")
+        time.sleep(0.01)
 
     def set_low(self):
         self.port.write(b"h\r\n")
+        time.sleep(0.01)
+        
+    def set(self):
+        self.set_high()
+        self.set_low()
 
     def read(self):
         self.port.write(b"j\r\n")
@@ -57,31 +69,48 @@ class CAM:
         self.port.readline()
         return out
 
-    def search(self):
+    def search(self, comparand=bitarray(32*[False]).tobytes(), mask=bitarray(32*[True]).tobytes()):
+        self.set()      
+        prevComparand = self.comparand
+        prevMask = self.mask
+        self.set_comparand(comparand)
+        self.set_mask(mask)
         self.port.write(b"k\r\n")
+        self.set_comparand(prevComparand)
+        self.set_mask(prevMask)
     
     def select_first(self):
         self.port.write(b"e\r\n")
 
-    def 
 
 cam = CAM("/dev/tty.usbmodem14201")
 
+cam.set_comparand()
+cam.set_mask()
 
-print(cam.get_tags())
-
-cam.set_high()
-cam.set_low()
-
-
+cam.set()
 print(cam.get_tags())
 
 cam.select_first()
-
 print(cam.get_tags())
 
-cam.set_comparand(b"funn")
-print(cam.get_comparand())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

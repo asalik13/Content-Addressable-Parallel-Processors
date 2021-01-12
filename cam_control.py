@@ -8,6 +8,8 @@ import time
 class CAM:
     def __init__(self, port):
         self.port = serial.Serial(port, 9600)
+        self.set_comparand()
+        self.set_mask()
 
     def get_tags(self):
         b = bitarray()
@@ -47,6 +49,8 @@ class CAM:
         self.set_comparand(word)
         self.set_mask()
         self.port.write(b"i\r\n")
+        self.set_mask(bitarray(32*[False]).tobytes())
+        self.port.write(b"i\r\n")
         self.set_comparand(prevComparand)
         self.set_mask(prevMask)
 
@@ -85,14 +89,24 @@ class CAM:
 
 cam = CAM("/dev/tty.usbmodem14201")
 
-cam.set_comparand()
-cam.set_mask()
+
 
 cam.set()
-print(cam.get_tags())
 
+cam.write(b"0")
 cam.select_first()
-print(cam.get_tags())
+print(cam.read(), "should be 0")
+
+cam.write(b"1")
+print(cam.read(), "should be 1")
+
+cam.search(b"0")
+print(cam.get_tags(), "should be all 1s with a trailing 0")
+
+cam.search(b"1")
+print(cam.get_tags(), "should be all 0s with a trailing 1")
+
+
 
 
 

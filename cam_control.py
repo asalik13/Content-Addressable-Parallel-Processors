@@ -18,7 +18,7 @@ class CAM:
         self.port.readline()
         b.frombytes(x[:-2])
         binary = b.to01()
-        print(binary)
+        #print(binary)
         return binary
 
     def set_comparand(self, comparand=bitarray(32*[False]).tobytes()):
@@ -67,7 +67,7 @@ class CAM:
         self.port.write(b"j\r")
         out = self.port.readline()
         self.port.readline()
-        print(out)
+        #print(out)
         return out
 
     def search(self, comparand=bitarray(32*[False]).tobytes(), mask=bitarray(32*[True]).tobytes()):
@@ -84,34 +84,16 @@ class CAM:
 cam = CAM("/dev/tty.usbmodem14101")
 
 
-# +
-def basicApiTest():
-    cam.set()
-    cam.write(b"0")
-    cam.select_first()
-    print(cam.read(), "should be 0")
-    cam.write(b"1")
-    print(cam.read(), "should be 1")
-    cam.search(b"0")
-    print(cam.get_tags(), "should be all 1s with a trailing 0")
-    cam.search(b"1")
-    print(cam.get_tags(), "should be all 0s with a trailing 1")    
-    
-    
-    
-    
-# -
-iter = 10
-count = iter
+iter = 200
 tests = [True] * iter
 
 for i in range(iter):
     cam.set()
     tests[i] = (cam.get_tags() == "1111111111111111")
+    cam.select_first()
+    tests[i] = tests[i] and (cam.get_tags() == "0000000000000001")
     cam.write(b"1")
     tests[i] = tests[i] and (cam.read() == b'1\x00\x00\x00\r\n')
-    """cam.select_first()
-    tests[i] = tests[i] and (cam.get_tags() == "0000000000000001")"""
 
 
 

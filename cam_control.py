@@ -1,4 +1,3 @@
-
 import serial
 from bitarray import bitarray
 import os
@@ -18,7 +17,7 @@ class CAM:
         self.port.readline()
         b.frombytes(x[:-2])
         binary = b.to01()
-        #print(binary)
+        print(binary)
         return binary
 
     def set_comparand(self, comparand=bitarray(32*[False]).tobytes()):
@@ -67,7 +66,7 @@ class CAM:
         self.port.write(b"j\r")
         out = self.port.readline()
         self.port.readline()
-        #print(out)
+        print(out)
         return out
 
     def search(self, comparand=bitarray(32*[False]).tobytes(), mask=bitarray(32*[True]).tobytes()):
@@ -81,49 +80,34 @@ class CAM:
         self.port.write(b"e\r")
 
 
-cam = CAM("/dev/tty.usbmodem14101")
+cam = CAM("COM4")
 
 
-iter = 200
+iter = 10000
 tests = [True] * iter
 
 for i in range(iter):
     cam.set()
     tests[i] = (cam.get_tags() == "1111111111111111")
+    cam.write(b"")  # So later we can select empty slots...
+    cam.search(b"")
     cam.select_first()
     tests[i] = tests[i] and (cam.get_tags() == "0000000000000001")
-    cam.write(b"1")
-    tests[i] = tests[i] and (cam.read() == b'1\x00\x00\x00\r\n')
-
-
+    cam.write(b"1111")
+    cam.search(b"")
+    cam.select_first()
+    tests[i] = tests[i] and (cam.get_tags() == "0000000000000010")
+    cam.write(b"1122")
+    output = cam.read()
+    tests[i] = tests[i] and (output == b"1122\r\n")
+    cam.search(b"1111")
+    tests[i] = tests[i] and (cam.get_tags() == "0000000000000001")
+    cam.search(b"1122")
+    tests[i] = tests[i] and (cam.get_tags() == "0000000000000010")
+    cam.search(b"2222")
+    tests[i] = tests[i] and (cam.get_tags() == "0000000000000000")
+    cam.search(b"1111", bitarray(16*[True] + 16*[False]).tobytes())
+    tests[i] = tests[i] and (cam.get_tags() == "0000000000000011")
 
 count = len([i for i in tests if i is True])
 print("Success Rate: ", count/iter * 100, "%")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

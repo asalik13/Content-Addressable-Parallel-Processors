@@ -1,0 +1,9 @@
+*.bin
+*.log
+*.asc
+*.blif
+*.json
+*.rpt
+*.elf
+*.txt
+*.history

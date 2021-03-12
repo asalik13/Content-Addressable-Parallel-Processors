@@ -25,7 +25,8 @@ SOURCES = \
 	$(RTL_USB_DIR)/usb_uart_core.v \
 	$(RTL_USB_DIR)/usb_uart_i40.v \
  	pll.v\
-	cam.v\
+	CAPP.v\
+	capp_module.v\
 	tags.v\
 	srff_behave.v\
 	cells.v\

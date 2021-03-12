@@ -55,12 +55,12 @@ module CAPP (
 
     reg [7:0] input_command;
     
-    // cam parameters (keep these as multiples of 8)
+    // CAPP parameters (keep these as multiples of 8)
     localparam num_bytes = 4;
     localparam num_bits = 8*num_bytes;
     localparam num_cells = 16;
 
-    // cam in
+    // CAPP in
     reg [num_bits - 1:0] comparand ;
     //initial comparand = 32'b11100011111000111110001111100011;
     reg [num_bits - 1:0] mask;
@@ -69,11 +69,11 @@ module CAPP (
     reg select_first;
     reg [2*num_bits - 1:0] write_lines;
 
-    // cam out
+    // CAPP out
     wire [num_cells - 1:0] tag_wires;
     wire [num_bits - 1:0] read_lines;
 
-    // cam control
+    // CAPP control
     reg [31:0] cnt = 0;
     reg [31:0] delay = 0;
 
@@ -122,13 +122,13 @@ module CAPP (
         .uart_out_ready( uart_out_ready  )
     );
 
-  // cam - instantiates a cam with given parameters
-  cam #(
+  // CAPP - instantiates a CAPP module with given parameters
+  capp_module #(
     .num_bits(num_bits),
     .num_cells(num_cells) 
   )
 
-  CAM_EXAMPLE(
+  CAPP_EXAMPLE(
     .CLK(pin_clk),
     .comparand(comparand),
     .mask(mask),

@@ -1,8 +1,8 @@
 /*
-  USB Serial
+  CAPP!
 */
 
-module usbserial_tbx (
+module CAPP (
         input  pin_clk,
       
         inout  pin_usb_p,
@@ -10,7 +10,7 @@ module usbserial_tbx (
 
         output pin_pu,
         output pin_led,
-        output [3:0] debug
+        //output [3:0] debug
     );
 
     wire clk_48mhz;
@@ -31,32 +31,38 @@ module usbserial_tbx (
 
     // uart pipeline in
     reg [7:0] uart_in_data;
-    reg       uart_in_valid = 1'b1;
+    reg       uart_in_valid = 1'b0;
     wire       uart_in_ready;
 
     // uart pipeline out
     wire [7:0] uart_out_data;
     wire       uart_out_valid;
-    reg       uart_out_ready;
+    reg       uart_out_ready = 1'b0;
 
+    
     // Output string
-    parameter OUTPUT_LEN=16;
+    parameter OUTPUT_LEN=4; 
     reg [8*OUTPUT_LEN - 1:0] output_text;
     reg [7:0] output_length;
     reg [7:0] output_char_count = 0;
 
     // Input string
-    parameter INPUT_LEN = 16;
-    reg [INPUT_LEN*8 - 1:0] input_text;
+    //parameter INPUT_LEN = 4;
+    //reg [INPUT_LEN*8 - 1:0] input_text;
+    
+    reg [num_bits - 1:0] input_word;
     reg [7:0] input_char_count = 0;
 
-
+    reg [7:0] input_command;
+    
     // cam parameters (keep these as multiples of 8)
-    localparam num_bits = 32;
+    localparam num_bytes = 4;
+    localparam num_bits = 8*num_bytes;
     localparam num_cells = 16;
 
     // cam in
-    reg [num_bits - 1:0] comparand;
+    reg [num_bits - 1:0] comparand ;
+    //initial comparand = 32'b11100011111000111110001111100011;
     reg [num_bits - 1:0] mask;
     reg perform_search;
     reg set;
@@ -78,9 +84,10 @@ module usbserial_tbx (
     // defining states
     parameter IDLE = 0;
     parameter SEND = 1;
-    parameter RECIEVE = 2;
+    parameter RECEIVE_COMMAND = 2;
+    parameter RECEIVE_WORD = 21; 
     parameter LISTEN = 3;
-    parameter ERROR = 4;
+    // parameter ERROR = 4;
     parameter CHOOSE_STATE = 5;
     parameter SET_COMPARAND_1 = 6;
     parameter SET_COMPARAND_2 = 7;
@@ -113,12 +120,9 @@ module usbserial_tbx (
         .uart_out_data( uart_out_data ),
         .uart_out_valid( uart_out_valid ),
         .uart_out_ready( uart_out_ready  )
-
-
-        //.debug( debug )
     );
 
-  // cam - instanciates a cam with given parameters
+  // cam - instantiates a cam with given parameters
   cam #(
     .num_bits(num_bits),
     .num_cells(num_cells) 
@@ -145,37 +149,56 @@ module usbserial_tbx (
         end
       end
       SEND: begin
-         if (uart_in_ready || (~uart_in_valid && ~uart_in_ready))
+        if (~uart_in_valid)
           begin
-              // send next character
-              uart_in_data <= output_text[8*(output_length - output_char_count - 1)+: 8];
-              // enable write
+              uart_in_data <= output_text[8*(output_length - output_char_count - 1) +: 8];
+              output_char_count <= output_char_count + 1;
               uart_in_valid <= 1;
-              // increment char count
-              output_char_count <= output_char_count +1;
-              // do this if message is sent
-              if (output_char_count +1 == output_length)
-              begin 
-                  output_char_count <= 0;
-                  curr_state <= next_state;
-              end 
+          end
+          else begin
+            if (uart_in_ready)
+              begin
+                if (output_char_count == output_length)
+                  begin 
+                    output_char_count <= 0;
+                    uart_in_valid <= 0;
+                    curr_state <= next_state;
+                  end
+                  else begin
+                    uart_in_data <= output_text[8*(output_length - output_char_count - 1) +: 8];
+                    output_char_count <= output_char_count +1;
+                  end 
+              end
           end
       end
-      RECIEVE: begin
-        uart_out_ready <= 1;
-        uart_in_valid <= 0;
+      RECEIVE_WORD: begin
+        // uart_out_ready <= 1;
+        // uart_in_valid <= 0;
         if (uart_out_valid) begin
-            if(uart_out_data == "\r" || input_char_count == INPUT_LEN) begin
+            input_word[8*(input_char_count)+: 8] <= uart_out_data;
+            if(input_char_count == num_bytes - 1) begin
+              input_char_count <= 0 ;
+              uart_out_ready <= 0;
               curr_state <= next_state;
             end
             else begin
-              input_text[8*(input_char_count)+: 7] <= uart_out_data;
               input_char_count <= input_char_count + 1;
             end
           end
       end
+      RECEIVE_COMMAND: begin
+        // uart_out_ready <= 1; should've been done by now!!!
+        // uart_in_valid <= 0; should've been done by now!!!
+        if (uart_out_valid) begin
+            input_command <= uart_out_data;
+            curr_state <= next_state;
+            uart_out_ready <= 0;
+            // pin_led <= 0;
+          end
+      end
       CHOOSE_STATE: begin
-        case(input_text)
+        // pin_led <= 0;
+        case(input_command)
           //set comparand
           "a": curr_state <= SET_COMPARAND_1;
           // get comparand
@@ -195,64 +218,54 @@ module usbserial_tbx (
           "i": curr_state <= WRITE;
           "j": curr_state <= READ;
           "k": curr_state <= SEARCH_1;
-          // error 
-          default: curr_state <= ERROR;
+          default: curr_state <= LISTEN;
         endcase
-        // Clear input
-        input_char_count <= 0;
-        input_text <= 0;
       end
       LISTEN: begin
-        curr_state <= RECIEVE;
+        pin_led <= 1;
+        uart_in_valid <= 0;
+        uart_out_ready <= 1;
+        curr_state <= RECEIVE_COMMAND;
         next_state <= CHOOSE_STATE;
-        // Clear input
-        input_char_count <= 0;
-        input_text <= 0;
-      end
-      ERROR: begin
-        output_text <= {"ERROR", input_text, "\r\n"};
-        output_length <= 8;
-        curr_state <= SEND;
-        next_state <= LISTEN;
       end
       SET_COMPARAND_1: begin
-        // set next states
-        curr_state <= RECIEVE;
+        uart_in_valid <= 0;
+        uart_out_ready <= 1;
+        curr_state <= RECEIVE_WORD;
         next_state <= SET_COMPARAND_2;
       end
       SET_COMPARAND_2: begin
         // set comparand
-        comparand <= input_text;
+        comparand <= input_word;
+        input_word <= 0;
         curr_state <= LISTEN;
-
       end
       GET_COMPARAND: begin
-        output_text <= {comparand, "\r\n"};
-        output_length <= 6;
+        output_text <= {comparand};
+        output_length <= 4;
         curr_state <= SEND;
         next_state <= LISTEN;
       end
       SET_MASK_1: begin
-        // set next states
-        curr_state <= RECIEVE;
+        uart_in_valid <= 0;
+        uart_out_ready <= 1;
+        curr_state <= RECEIVE_WORD;
         next_state <= SET_MASK_2;
       end
       SET_MASK_2: begin
-        mask <= input_text;
-        // Clear input
-        input_char_count <= 0;
-        input_text <= 0;
+        mask <= input_word;
+        input_word <= 0;
         curr_state <= LISTEN;
       end
       GET_MASK: begin
-        output_text <= {mask, "\r\n"};
-        output_length <= 6;
+        output_text <= {mask};
+        output_length <= 4;
         curr_state <= SEND;
         next_state <= LISTEN;
       end
       GET_TAGS: begin
-        output_text <= {tag_wires, "\r\n"};
-        output_length <= 4;
+        output_text <= {tag_wires};
+        output_length <= 2;
         curr_state <= SEND;
         next_state <= LISTEN;
       end
@@ -261,12 +274,14 @@ module usbserial_tbx (
         delay <= 5;
         curr_state <= IDLE;
         next_state <= SELECT_FIRST_2;
+        //curr_state <= SELECT_FIRST_2;
       end
       SELECT_FIRST_2: begin
         select_first <= 0;
         delay <= 5;
         curr_state <= IDLE;
         next_state <= LISTEN;
+        //curr_state <= LISTEN;
       end
       SET_HIGH:begin
         set <= 1;
@@ -290,8 +305,8 @@ module usbserial_tbx (
         next_state <= LISTEN;
       end
       READ: begin
-        output_text <= {read_lines, "\r\n"};
-        output_length <= 6;
+        output_text <= {read_lines};
+        output_length <= 4;
         curr_state <= SEND;
         next_state <= LISTEN;
       end

@@ -2,8 +2,8 @@
 ## Make and program TinyFPGA BX
 ##
 
-BASENAME = usbserial
-TARGETNAME = $(BASENAME)_tbx
+BASENAME = CAPP
+TARGETNAME = $(BASENAME)
 PROJTOP = $(TARGETNAME)
 
 RTL_USB_DIR = usb

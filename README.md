@@ -1,9 +1,9 @@
-# Content-Addressable-Memory
-This is an implementation of a simple CAM as found in Caxton C Founder's Book 'Content Addressable Memory'.
+# Content-Addressable-Parallel-Processors
+This is an implementation of a simple CAPP as found in Caxton C Founder's Book 'Content Addressable Memory'.
 
 You can find all the different modules that work with each other in their specific files.
 
-- *cam.v* contains the main module. It uses all the modules below and is at top level. (for now)
+- *CAPP.v* contains the main module. It uses all the modules below and is at top level.
 
 - *compare.v* contains 3 inputs, wires from 2 registers, comparand and mask, and the wire that controls the search function. This module outputs 64 mismatch lines, 2 for each bit.
 
@@ -16,12 +16,12 @@ You can find all the different modules that work with each other in their specif
 The control.v is currently under development. The goal is for it to use these individual models with multiple overlaying programs like search, write, read, find_biggest, add_one.
 
 # Notes
-- Use `apio build` to build the program. (Fixed now)
-- Use `tinyprog --program hardware.bin` to upload it.
+- Use `make` to build this program (requires )
+- Use `tinyprog -p CAPP.bin` to upload it.
 - This uses System Verilog for some tests, specifically so I can send N bit vectors instead of typing the whole vector out. Example, `'1` is the same as `32'b11111111...1`
   
 
-# Hyper Dimensional Computing / CAM Ideas
+# Hyper Dimensional Computing / CAPP Ideas
 
 
 - Graph coloring ([related paper for GPUs](https://people.eecs.berkeley.edu/~aydin/coloring.pdf)) 
@@ -30,7 +30,7 @@ The control.v is currently under development. The goal is for it to use these in
 
 - Simple calculations like multiplication might match the time compexity of the same for GPUs, which would lead to faster matrix multiplication. 
    - We could start by finding powers of an adjacency matrix of an unweighted graph. [Which would help finding shortest paths faster ](https://people.cs.umass.edu/~barring/cs575f16/lecture/11.pdf) 
-- Find the most similar/ closest vector(s) to find the closest one. Store neural network patterns in a CAM and fetch them with this algorithm. Can be done in O(n). Something similar is done [here](http://moimani.weebly.com/uploads/2/3/8/6/23860882/nvmw2017.pdf)
+- Find the most similar/ closest vector(s) to find the closest one. Store neural network patterns in a CAPP and fetch them with this algorithm. Can be done in O(n). Something similar is done [here](http://moimani.weebly.com/uploads/2/3/8/6/23860882/nvmw2017.pdf)
 - Graph search
   - There are at least two ways we can go about this
    1. The author's way of doing it is by dividing each cell into four sections: source, destination, counter and flag.
@@ -38,7 +38,7 @@ The control.v is currently under development. The goal is for it to use these in
    
 - We can also think of tweaking the architecture to allow for multiple layers of search lines, theoretically
   
-  - This could this parallelize our graph search algorithms as well as make the '|' regex expression possible. This [patent](https://patents.google.com/patent/US7225188) uses multiple CAMs for regex parsing.
+  - This could this parallelize our graph search algorithms as well as make the '|' regex expression possible. This [patent](https://patents.google.com/patent/US7225188) uses multiple CAPPs for regex parsing.
   
   - This would be able to collect multiple searches with different tags registers for each layer. 
   

@@ -11,7 +11,9 @@ You can find all the different modules that work with each other in their specif
 
 ![compare.v](https://github.com/asalik13/Content-Addressable-Parallel-Processors/blob/master/FPGA-CAPP%20research%20paper/images/search_registers.png)
 
-- *cells.v* contain the main memory cells, right now they are only hundred to reduce resource complexity for the TinyFPGA Bx, but can easily be increased. There are various lines that connect to each bit f each cell, These are write lines, read lines and the match lines. The cell outputs tags for each cell
+- *cells.v* contain the main memory cells, right now there are only sixteen words (32-bit wide) to reduce resource complexity for the TinyFPGA Bx, but the only limit is the number of LUTs available once the USB-UART module is accounted for.
+
+![cells.v](https://raw.githubusercontent.com/asalik13/Content-Addressable-Parallel-Processors/master/FPGA-CAPP%20research%20paper/images/cells.png)
 
 - *tags.v* contain the circuity for all the tags. It has the select_first, set and mismatch lines as its input. It outputs the values of tags.
 

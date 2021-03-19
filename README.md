@@ -5,7 +5,7 @@ This is an implementation of a simple CAPP as found in Caxton C Founder's Book '
 
 You can find all the different modules that work with each other in their specific files.
 
-- *CAPP.v* contains the main module. It uses all the modules below and is at the top level. It manages the high-level protocol for communication with the host computer over USB-UART. The protocol is implemented as a state machine:
+- *CAPP.v* contains the main module. It uses all the modules below and is at the top level. It manages the high-level protocol for communication with the host computer over USB-UART. The protocol is implemented as a finite state machine:
 
 
 

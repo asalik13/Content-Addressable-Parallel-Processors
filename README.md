@@ -13,6 +13,8 @@ You can find all the different modules that work with each other in their specif
 
 - *tags.v* contain the circuity for all the tags. It has the select_first, set and mismatch lines as its input. It outputs the values of tags.
 
+![tags.v](https://raw.githubusercontent.com/asalik13/Content-Addressable-Parallel-Processors/master/FPGA-CAPP%20research%20paper/images/tag_registers.png)
+
 - *srff_behave.v* contains a helper module, for a simple flip flop that is used in tags.v and cells.v for writing values.
 
 

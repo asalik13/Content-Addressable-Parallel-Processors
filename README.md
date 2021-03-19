@@ -1,4 +1,4 @@
-![Content Addressable Parallel Processors](https://raw.githubusercontent.com/asalik13/Content-Addressable-Parallel-Processors/master/FPGA-CAPP%20research%20paper/images/CAPP.jpg)
+![Content Addressable Parallel Processors](https://raw.githubusercontent.com/asalik13/Content-Addressable-Parallel-Processors/master/FPGA-CAPP%20research%20paper/images/CAPP_cover.jpg)
 
 # Content-Addressable-Parallel-Processors
 This is an implementation of a simple CAPP as found in Caxton C Founder's Book 'Content Addressable Memory'.

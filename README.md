@@ -17,6 +17,5 @@ You can find all the different modules that work with each other in their specif
 
 
 # Notes
-- Use `make` to build this program (requires )
-- Use `tinyprog -p CAPP.bin` to upload it.
-- This uses System Verilog for some tests, specifically so I can send N bit vectors instead of typing the whole vector out. Example, `'1` is the same as `32'b11111111...1`
+- Use `make` to build this program (requires [nextpnr](https://github.com/YosysHQ/nextpnr))
+- Use `tinyprog -p CAPP.bin` to upload i (which you can get [here](https://github.com/tinyfpga/TinyFPGA-Bootloader/tree/master/programmer))

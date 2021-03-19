@@ -9,6 +9,8 @@ You can find all the different modules that work with each other in their specif
 
 - *compare.v* contains 3 inputs, wires from 2 registers, comparand and mask, and the wire that controls the search function. This module outputs 64 mismatch lines, 2 for each bit.
 
+![compare.v](https://github.com/asalik13/Content-Addressable-Parallel-Processors/blob/master/FPGA-CAPP%20research%20paper/images/search_registers.png)
+
 - *cells.v* contain the main memory cells, right now they are only hundred to reduce resource complexity for the TinyFPGA Bx, but can easily be increased. There are various lines that connect to each bit f each cell, These are write lines, read lines and the match lines. The cell outputs tags for each cell
 
 - *tags.v* contain the circuity for all the tags. It has the select_first, set and mismatch lines as its input. It outputs the values of tags.

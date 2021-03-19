@@ -7,6 +7,7 @@ You can find all the different modules that work with each other in their specif
 
 - *CAPP.v* contains the main module. It uses all the modules below and is at the top level. It manages the high-level protocol for communication with the host computer over USB-UART. The protocol is implemented as a finite state machine:
 
+![CAPP.v](https://github.com/asalik13/Content-Addressable-Parallel-Processors/blob/master/FPGA-CAPP%20research%20paper/images/protocol.png)
 
 
 - *compare.v* contains 3 inputs, wires from 2 registers, comparand and mask, and the wire that controls the search function. This module outputs 64 mismatch lines, 2 for each bit.

@@ -5,7 +5,9 @@ This is an implementation of a simple CAPP as found in Caxton C Founder's Book '
 
 You can find all the different modules that work with each other in their specific files.
 
-- *CAPP.v* contains the main module. It uses all the modules below and is at the top level. It manages the high-level protocol for communication with the host computer over USB-UART.
+- *CAPP.v* contains the main module. It uses all the modules below and is at the top level. It manages the high-level protocol for communication with the host computer over USB-UART. The protocol is implemented as a state machine:
+
+
 
 - *compare.v* contains 3 inputs, wires from 2 registers, comparand and mask, and the wire that controls the search function. This module outputs 64 mismatch lines, 2 for each bit.
 

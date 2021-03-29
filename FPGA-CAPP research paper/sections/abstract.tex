@@ -1,6 +1,3 @@
 \begin{abstract}
-    We designed a synthesizable module for Content Addressable Memory on a FPGA. 
-    The module designed is expandable and uses a very small amount of LUTs. 
-    It can also be used as a co-processor for a Von Neumann based CPU machine using serial communication. 
-    This type of memory is able to provide constant time complexities for searching, reading and writing by leveraging certain circuity around each cell of memory.  
+    In this short article, we report on the implementation of a Content Addressable Parallel Processor using a FPGA. While Content addressable memories have been implemented in FPGAs, to our knowledge this is the first implementation in FPGA of Caxton C. Foster's vision of parallel \emph{processing}, particularly the notions of parallel write as well as the combining of output values, which are usually missing in more typical CAM implementations, such as the ones designed for network routing. The resulting CAPP is made accessible to a host computer over a USB/UART interface, using a straightforward serial protocol that is demonstrated using a Python-based driver.
 \end{abstract}

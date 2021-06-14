@@ -1,8 +1,6 @@
 \section{The Finite State Machine}
-The FSM is the crux of interacting with the CAPP and making it carry out complex arbitrary algorithms by exposing commands to carry out different tasks. 
-It has numerous states, some of them are sending or receiving data, loading data into the CAPP, selecting first, searching, reading, setting the comparand and mask as well as writing. 
-The base UART module used is from David Things' Github repository. \cite{uart} This works on a 48MHz clock cycle.
-To reduce complexities and avoid additional LUTs usage, we used the same clock speed throughout the project. 
+The FSM manages the interactions between the CAPP and the host computer and it is responsible for orchestrating the individual CAPP operations necessary to implement complex arbitrary algorithms on the host computer.
+It has numerous states, such as those for sending or receiving data, loading data into the CAPP, searching the memory (which in turn requires setting the comparand and mask) as well as reading the combined output. To implement the communication with the host computer we use base UART module provided in David Things' Github repository \cite{uart}. To reduce complexities and minimize our LUT-budget, we adopted the 48MHz clock speed used by the UART module throughout this project. 
 
 \begin{figure}
   \includegraphics[height=6cm]{FPGA-CAPP research paper/images/protocol.png}
@@ -10,42 +8,43 @@ To reduce complexities and avoid additional LUTs usage, we used the same clock s
   \label{FSM_protocol}
 \end{figure}
 
-As shown in Figure \ref{FSM_protocol}, our FSM acts as a way to carry out procedural tasks while staying under the limit of 21ns by linking states together. 
-Therefore, a task may trigger several states before it returns to the default state. 
-For example, the algorithm for searching has several steps, it comprises of
+As shown in Figure \ref{FSM_protocol}, our FSM will typically break down a task into multiple short procedural tasks to reduce both magnitude and variance of the latency associated with each atomic state/task. In other words, we attempted to have a repertoire of tasks which all had (similarly) short latencies. Consequently, an overall task may necessitate several atomic states before returning the CAPP to its default ready state. 
+For example, the operations for searching involve several steps, which are typically initiated by the Python "driver" and include:
+
 \begin{itemize}
+    \item Resetting the tags (set tags high, followed by set tags low)
     \item Setting the comparand 
     \item Setting the mask 
-    \item Sending the SET signal
-    \item Sending the SEARCH signal 
+    \item Sending the search signal 
 \end{itemize}
 
-Notice that the first two steps use several clock cycles as only one byte of data flows through the UART each clock cycle. 
-This is due to its pipeline design. 
+Notice that setting the comparand and mask require several clock cycles as the memory is based on 4-byte words and the CAPP can only send one byte per CAPP clock cycles. Furthermore, the FSM diagram shows a single RECEIVE state that can be used to receive both the comparand and the mask. Technically, in a formal FSM diagram, this should be represented by two distinct states, however, the Verilog code re-uses some logic when implementing these operations and we wanted the FSM-diagram to reflect this.
 
-The states transitions for the SET signal is given below:
-\begin{itemize}
-    \item  SET 1: change SET to high, set delay to 5 clock cycles
-    \item  IDLE: wait for delay, go to SET 0
-    \item  SET 0: change SET to low, listen for new command
-\end{itemize}
-\vspace{5mm}
-This is similar to the SEARCH signal:
-\begin{itemize}
-    \item  SEARCH 1: change SEARCH to high, set delay to 5 clock cycles
-    \item  IDLE: wait for delay, go to SEARCH 0
-    \item  SEARCH 0: change SEARCH to low, listen for new command
-\end{itemize}
-\vspace{5mm}
-The tasks that involve transmitting follow a similar state transition procedure. 
-Here, a state send one character to the host through the uart each clock cycle. 
-Examples of these are sending comparand, tags and mask. 
-The state transition diagram for sending the comparand is shown in \ref{FSM_protocol}.
-The procedures for the other commands are similar in the way that different states just change the value of a register. 
-The send state just transmits data from this register. 
-This design decision was made to reduce the memory as well as number of combinatorial circuits. 
+As seen above, resetting the tags is, in fact, a two step operations:
 
 \begin{itemize}
-    \item  GET COMPARAND: set output text to comparand
-    \item  SEND: Send the next character until EOL. Listen for next command
+    \item Set Tags High: change SET to high
+    \item Set Tags Low: change SET to low
 \end{itemize}
+where SET refers to the SET line shown in Figure \ref{tag_registers}.
+
+Some operations that appear to be atomic in Figure \ref{FSM_protocol} are in fact composed of multiple micro-steps, including an "IDLE" (delay) step. For example, the Search command is in fact composed of three micro-steps:
+
+\begin{itemize}
+    \item SEARCH\_1: 
+        \begin{itemize}
+            \item set SEARCH to high
+            \item set delay to 5 clock cycles
+        \end{itemize}
+    \item IDLE:
+        \begin{itemize}
+            \item wait for duration of delay
+            \item go to SEARCH\_2
+        \end{itemize}
+    \item SEARCH\_2: 
+        \begin{itemize}
+            \item set SEARCH to low
+        \end{itemize}
+\end{itemize}
+
+where SEARCH refers to the "Perform Search" line in Figure \ref{search_circuit}. IDLE represents another case of a "shared" micro-step which is reused by two commands (as was the case with RECEIVE). Though it is not represented in Figure \ref{FSM_protocol} (in the interest of clarity), IDLE is in fact used by both the Search and Select commands.

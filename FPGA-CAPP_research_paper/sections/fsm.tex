@@ -3,7 +3,7 @@ The FSM manages the interactions between the CAPP and the host computer and it i
 It has numerous states, such as those for sending or receiving data, loading data into the CAPP, searching the memory (which in turn requires setting the comparand and mask) as well as reading the combined output. To implement the communication with the host computer we use base UART module provided in David Things' Github repository \cite{uart}. To reduce complexities and minimize our LUT-budget, we adopted the 48MHz clock speed used by the UART module throughout this project. 
 
 \begin{figure}
-  \includegraphics[height=6cm]{FPGA-CAPP research paper/images/protocol.png}
+  \includegraphics[height=6cm]{FPGA-CAPP_research_paper/images/protocol.png}
   \caption{Overview of the FSM underlying the CAPP-host protocol}
   \label{FSM_protocol}
 \end{figure}
